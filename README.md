@@ -33,12 +33,12 @@ CrossMarket/
 │   └── fx_rates.csv            # Documented FX benchmarks with official series codes (BoE/Fed)
 ├── src/
 │   ├── data_processing.py      # Multi-rule data validation, cleaning, and FX standardization
-│   └── analysis.py             # Analytical engine: KPIs, parity matching, positioning, hypotheses
+│   └── analysis.py             # Analytical engine: KPIs, parity matching, brand and retailer summaries, follow-up checks
 ├── reports/
-│   └── findings.md             # Reconciled research findings report with business implications
+│   └── findings.md             # Reconciled sample findings, caveats, and follow-up questions
 ├── tests/
-│   ├── test_data_processing.py # 11 unit tests for negative validation, FX math, and schema
-│   └── test_analysis.py        # 6 unit tests asserting exact headline and category reconciliations
+│   ├── test_data_processing.py # 15 unit tests for validation, FX math, and schema
+│   └── test_analysis.py        # 7 unit tests for parity, summaries, and follow-up analysis
 ├── requirements.txt            # Project dependencies
 ├── README.md                   # Project documentation and quickstart guide
 └── .gitignore                  # Git exclusions
@@ -122,7 +122,7 @@ pip install -r requirements.txt
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 The tests validate code behavior, schema and calculation reconciliation. Passing tests do not independently verify retailer listings or historical prices.
-*(Executes 17 comprehensive unit tests verifying data schema, multi-rule validation failures, FX conversion math, and exact numerical reconciliation of headline findings.)*
+*(Runs the 22-test suite listed in Section 8, covering data validation, FX/VAT calculations, matching, and analytical reconciliations.)*
 
 ### 5. Launch the Streamlit Dashboard
 ```bash
@@ -196,7 +196,7 @@ The automated test suite (`tests/`) executes 22 tests:
 - `test_parity_matching_integrity`: Asserts that every pair enforces brand equality, pack quantity equality, and valid positive prices.
 - `test_category_parity_reconciliation`: Asserts exact numerical reconciliation of category markups.
 - `test_brand_positioning_reconciliation`: Verifies brand tier classifications, Hobonichi luxury tier ($35.31), and Uni mass tier ($5.69).
-- `test_hypotheses_integrity_and_caveats`: Confirms all 4 hypotheses contain dynamic figures, testable actions, and substantive limitation notes.
-- `test_hypothesis_metrics_follow_active_selection`: Ensures filter-sensitive claims use the active selection and Japanese-only ratings.
+- `test_hypotheses_integrity_and_caveats`: Confirms generated follow-up observations include evidence, a next check, and limitations.
+- `test_hypothesis_metrics_follow_active_selection`: Ensures follow-up observations respond to active filters and do not silently use full-sample figures.
 
 Run the test command above to verify the current code and data together.
