@@ -1,20 +1,14 @@
-# 🗾 CrossMarket — Japanese Product Market Analysis Dashboard
+# 🗾 CrossMarket — US–UK Launch Screening Dashboard
 
-> **A rigorous data analytics and pricing intelligence dashboard evaluating the competitive positioning, cross-market parity, and retail presence of Japanese stationery products in the United States and United Kingdom.**
+> **A first-pass, sample-based screen to shortlist Japanese stationery products and categories for deeper US/UK pricing and retail-entry research.**
 
 ---
 
 ## 📌 1. Business Objective
 
-Japanese domestic stationery manufacturers face structural headwinds in their domestic market: an aging, declining school-age demographic and corporate paperless initiatives. Concurrently, overseas consumer appetite in North America and Western Europe for premium Japanese analog stationery—such as fountain-pen-friendly notebook papers, needle-point gel pens, and minimalist desk tools—has grown significantly.
+**Decision question:** Given a curated sample of Japanese stationery listings, which US/UK product categories and individual products should a company investigate first for pricing and retail-entry opportunities?
 
-This project delivers an empirical data analytics solution to answer key commercial questions:
-- How do Japanese stationery products compare in retail price across the **United States (US)** and **United Kingdom (UK)**?
-- How are Japanese brands positioned relative to established Western competitors (e.g., Moleskine, Leuchtturm1917, LAMY, Sharpie)?
-- What markups, category variations, and channel coverage patterns are observed across specialist and mass retailers?
-- What evidence-backed **hypotheses** should Japanese brands investigate when evaluating international expansion?
-
-> **Small Business Analytics Focus:** This is a clean, reliable, finished business intelligence dashboard. It prioritizes data integrity, verified public listings, auditable provenance, and clear visualizations over unnecessary complexity.
+The dashboard compares recorded listings across the two markets, adjusts UK prices for VAT, identifies category and product-level price differences, and shows which brands and retailers appear in the sample. This is an **exploratory first screen**: it helps prioritize follow-up research, but it cannot establish demand, sales, profit, or a final launch price. Product equivalence and listing details also require verification.
 
 ---
 
@@ -35,7 +29,7 @@ This project delivers an empirical data analytics solution to answer key commerc
 CrossMarket/
 ├── app.py                      # Interactive Streamlit dashboard application
 ├── data/
-│   ├── products.csv            # 76 verified observations with full provenance & audit keys
+│   ├── products.csv            # 76 curated listing observations with source URLs and audit fields
 │   └── fx_rates.csv            # Documented FX benchmarks with official series codes (BoE/Fed)
 ├── src/
 │   ├── data_processing.py      # Multi-rule data validation, cleaning, and FX standardization
@@ -54,24 +48,24 @@ CrossMarket/
 
 ## 📊 4. Data Collection, Provenance & Verification
 
-### Verified Dataset Scope
-- **76 Verified Product-Market Observations** (38 US listings, 38 UK listings).
-- **40 Distinct Product Models:**
-  - 36 products have identical product names and packaging across both markets.
-  - 2 products have localized regional or size variant designations (*Pilot Metropolitan* fine black in US vs *Pilot MR Retro Pop* fine metallic in UK; *Midori MD Cotton F0* in US vs *Midori MD Cotton A5* in UK), fully documented via `cross_market_match_id` and `match_notes`.
+### Dataset Scope
+- **76 curated product-market observations** (38 US listings, 38 UK listings) collected for an exploratory sample analysis. This should not be interpreted as 76 currently re-verified listings; some source pages are inaccessible or stale and some saved prices/statuses need dated evidence.
+- **40 distinct product-name entries** are recorded. The CSV labels 36 pairs exact and 2 as regional variants, but the full SKU/variant equivalence has not been rechecked. The partial audit flags the Pilot and Midori Cotton pairs for cautious interpretation.
 - **14 Brands Represented:** 9 Japanese heritage manufacturers (*Midori, Kokuyo, Pilot, Zebra, Uni / Mitsubishi Pencil, Tombow, Maruman, Platinum, Hobonichi*) and 5 Western benchmark competitors (*Moleskine, Leuchtturm1917, Rhodia, LAMY, Sharpie*).
-- **6 Authorized Public Retail Channels:**
+- **6 Public Retail Channels Represented in the Sample:**
   - *United States:* JetPens, Amazon US, Yoseka Stationery.
   - *United Kingdom:* Cult Pens, Amazon UK, London Graphic Centre.
 
-### Auditable Provenance & Collection Methodology
-Each row in `data/products.csv` records:
+### Source Tracking & Verification Limits
+Each row in `data/products.csv` includes:
 - `cross_market_match_id`: Stable identifier linking US and UK counterpart observations (`MATCH_MID_001` through `MATCH_ZEB_005`).
-- `match_quality`: `Exact SKU & Pack Match` (36 pairs) vs `Closely Matched Regional Variant` (2 pairs).
+- `match_quality`: Original CSV match labels (36 marked exact, 2 marked variant); not every pair has been independently confirmed as like-for-like.
 - `pack_quantity` & `unit_price_usd`: True unit price per pen/notebook to prevent pack-count distortion.
 - `seller_type`: Retail channel classification (e.g. *Specialist Direct Importer*, *Marketplace First-Party*).
-- `verification_status` & `verification_notes`: Explicit per-row verification record with collection timestamp (`2026-09-30T14:30:00Z`), observed price, currency, rating, and review count.
-- `product_url`: Live, clickable URL to public product page.
+- `verification_status` & `verification_notes`: Original collection claims and timestamp. These fields have not been independently re-established for every row; treat them as reported metadata, not proof of current availability or price.
+- `product_url`: Source URL recorded during collection. Some retailer URLs are now stale or inaccessible.
+
+A partial source audit is recorded in [`reports/source_verification_audit.md`](reports/source_verification_audit.md). It identifies current-page matches, stale links, likely variant/pack concerns, and pages that could not be independently checked. A current listing can corroborate product identity, but cannot prove a historical price unless a dated capture exists. The project is therefore presented as a **sample-based retail listing analysis**, not a fully verified live-price census.
 
 ### Currency Standardization & Documented FX Rates
 Prices are collected in native retail currencies (USD, GBP) and standardized to USD using official benchmark exchange rates from `data/fx_rates.csv`:
@@ -127,6 +121,7 @@ pip install -r requirements.txt
 ```bash
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
+The tests validate code behavior, schema and calculation reconciliation. Passing tests do not independently verify retailer listings or historical prices.
 *(Executes 17 comprehensive unit tests verifying data schema, multi-rule validation failures, FX conversion math, and exact numerical reconciliation of headline findings.)*
 
 ### 5. Launch the Streamlit Dashboard
@@ -134,6 +129,16 @@ python -m unittest discover -s tests -p "test_*.py" -v
 streamlit run app.py
 ```
 The dashboard will open automatically in your browser at `http://localhost:8501`.
+
+## Dashboard Decision Flow
+
+1. **US–UK Pricing Screen:** Compare VAT-adjusted category price differences, then inspect recorded matched products that may merit deeper research.
+2. **Brand & Retail Coverage:** See which brands, categories, and retailers are represented in this sample; collected row counts do not represent market shares.
+3. **What to Investigate Next:** Follow evidence-linked checks for price differences, writing-product comparability, and sample coverage before making business decisions.
+4. **Compare Sample Listings:** Open source URLs and inspect price, seller, pack size, and match notes before relying on a comparison.
+5. **Findings & Methodology:** Read the full-sample baseline and the data-quality, FX, VAT, and verification limitations.
+
+The dashboard's intended output is a **shortlist for further investigation**, not a go/no-go launch decision or a recommended selling price.
 
 ---
 
@@ -144,28 +149,27 @@ The dashboard will open automatically in your browser at `http://localhost:8501`
 | **All Matched Pairs** | **+38.9%** | **+38.9%** | **+15.8%** | **+15.8%** | **38** |
 | **Exact SKU & Pack Only** | **+39.5%** | **+38.9%** | **+16.3%** | **+15.8%** | **36** |
 
-### Category Breakdown (All 38 Matched Pairs)
-- **Highlighters & Markers (2 pairs):** US Median $11.90 vs UK Median $24.80 &rarr; **+106.4% nominal (+72.0% ex-VAT)**. Driven by high UK specialist set prices (Tombow ABT 10-pack +111.2% nom).
+### Category Breakdown (All 38 Recorded Match Pairs)
+- **Highlighters & Markers (2 recorded pairs):** US Median $11.90 vs UK Median $24.80 &rarr; **+106.4% nominal (+72.0% ex-VAT)**. Driven by high UK specialist set prices (Tombow ABT 10-pack +111.2% nom).
 - **Desk Accessories (3 pairs):** US Median $7.50 vs UK Median $11.42 &rarr; **+47.4% nominal (+22.8% ex-VAT)**.
 - **Pens & Writing (16 pairs):** US Median $6.75 vs UK Median $9.45 &rarr; **+39.3% nominal (+16.1% ex-VAT)**.
 - **Notebooks & Pads (12 pairs):** US Median $14.15 vs UK Median $19.90 &rarr; **+32.4% nominal (+10.3% ex-VAT)**. Freight weight and boutique distributor margins.
 - **Planners & Diaries (5 pairs):** US Median $42.00 vs UK Median $51.55 &rarr; **+21.4% nominal (+1.1% ex-VAT)**. Tight publisher parity maintained by Hobonichi.
 
-### Quality Benchmark
-- Across all brands, the listing-level mean rating is **★ 4.75 / 5.0** across 75 rated listings and **335,669 logged listing reviews**. Japanese-brand listings average **★ 4.76 / 5.0** across 65 rated listings and **202,459 logged listing reviews**; 95.4% of those rated listings score at least 4.6. Moleskine's observed mean is 4.55. These are listing-level review aggregates, not unique-customer counts.
+### Supporting Data Outside the Decision Headline
+- Product ratings and review counts remain available in the listing explorer as contextual source fields. They are not used as launch-readiness evidence because listing-level reviews are self-selected, may overlap across listings, and do not establish market demand.
 
 ---
 
-## 💡 7. Strategic Hypotheses for Brand Investigation
+## 💡 7. Evidence-linked Follow-up Checks
 
-| ID | Title | Observation | Testable Business Action | Limitation Notice |
+| ID | Research question | Evidence-linked next check | Practical follow-up | Data limitation |
 | :--- | :--- | :--- | :--- | :--- |
-| **HYP-01** | UK Import Price Premium | Compare market-specific prices for matched products and test whether observed premiums persist after VAT normalization. | Test localized UK pricing and distribution through a small pilot. | Retail listings do not establish transaction volumes, sales velocity, or realized margins. |
-| **HYP-02** | Writing-Instrument Price Sensitivity | Compare observed writing-instrument price ranges and pack prices across markets; these data do not directly measure elasticity. | Test single-item and bundle offers with a controlled price experiment. | Listing prices and review counts cannot establish price elasticity or causal demand response. |
-| **HYP-03** | Japanese Listing Satisfaction | Japanese-brand listing ratings are summarized separately from Western benchmark listings in the dashboard. | Treat ratings as a buyer-pitch input and validate through customer research. | Review scores are self-selected listing-level averages; review totals are not unique-customer counts. |
-| **HYP-04** | Desk-Accessory Coverage | Compare desk-accessory listing counts and shares within the current US/UK sample. | Validate any apparent gap with broader retailer and distributor research. | A curated listing sample cannot establish market-wide availability or unmet demand. |
+| **NEXT-01** | Verify observed UK price differences | Check the source pages, exact variant/pack, seller, stock, and current prices for the largest displayed differences. | Collect wholesale, shipping, duty, and fulfillment costs before estimating a viable selling price. | Retail listings do not establish current comparability, sales, or realized margins. |
+| **NEXT-02** | Check writing-product comparability | Separate single pens and multipacks; compare like-for-like types and unit prices. | Use a controlled price pilot with sales data to estimate elasticity. | The current listing sample does not establish a price ceiling or elasticity. |
+| **NEXT-03** | Check sample coverage for desk accessories | Search a broader, consistently defined retailer set in both markets for comparable accessory types and stock status. | Treat the current counts as a collection check, not as evidence of a market gap. | The curated sample is not a systematic retailer census. |
 
-*Disclaimer: All hypotheses represent empirical starting points for management investigation, not guaranteed proof of market demand or sales velocity.*
+These checks are research steps suggested by the available fields; they are not business recommendations. The dataset contains public listing records, not sales, costs, market size, or controlled customer experiments.
 
 ---
 

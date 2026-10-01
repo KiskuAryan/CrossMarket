@@ -270,11 +270,10 @@ def identify_price_segments_and_hypotheses(
     df: pd.DataFrame,
     parity_df: Optional[pd.DataFrame] = None
 ) -> Dict[str, Any]:
-    """
-    Evaluates price tier distribution and generates dynamic, mathematically reconciled
-    business hypotheses regarding price markups, category white spaces, and retailer positioning.
-    
-    IMPORTANT: All opportunities are explicitly framed as hypotheses rather than proof of market demand.
+    """Summarize the sample and produce evidence-linked questions for follow-up research.
+
+    This dataset contains retail listings, not sales, market size, costs, or experiments;
+    generated observations must not be presented as proof of demand or as pricing advice.
     """
     if parity_df is None or parity_df.empty:
         try:
@@ -355,19 +354,20 @@ def identify_price_segments_and_hypotheses(
     hypotheses = [
         {
             "id": "HYP-01",
-            "title": "UK Import Premium Disparity on Specialty Paper & Art Markers",
+            "title": "Verify the largest observed UK price differences",
             "observation": (
                 f"{overall_observation} Category results in this selection: Highlighters & Markers "
                 f"{category_premium('Highlighters & Markers')}; Notebooks & Pads "
                 f"{category_premium('Notebooks & Pads')}."
             ),
             "hypothesis": (
-                "UK consumers and boutique stockists demonstrate higher price tolerance for imported Japanese specialty paper and art supplies "
-                "due to fewer domestic direct-import channels, suggesting Japanese paper mills could capture higher gross margin through dedicated UK distribution."
+                "The observed differences may identify products worth checking first, but this sample cannot tell whether they reflect current comparable offers, "
+                "retailer/channel mix, or taxes and costs beyond VAT."
             ),
             "evidence": f"Computed from the {n_pairs} matched pairs currently in the selection; category sample sizes are shown with each result.",
             "testable_action": (
-                "Pilot direct-to-consumer (DTC) UK storefronts and specialized university/art school wholesale accounts to test volume elasticity at current price points."
+                "Recheck the source pages, exact variant and pack, seller, stock status, and current price for the largest category and product differences; "
+                "then gather wholesale, shipping, duty, and fulfillment costs before estimating a viable price."
             ),
             "limitation_note": (
                 "Hypothesis only. Reflects advertised retail prices at specialist stockists; does not measure sales volume, inventory clearance, or wholesale margin."
@@ -375,22 +375,22 @@ def identify_price_segments_and_hypotheses(
         },
         {
             "id": "HYP-02",
-            "title": "Mass-Market Ballpoint/Gel Pen Price Elasticity Ceiling (<$5)",
+            "title": "Check writing-product comparability and price bands",
             "observation": (
                 f"Pens & Writing listing prices span {writing_ranges['US']} in the US and "
                 f"{writing_ranges['UK']} in the UK ({int(writing_counts.get('US', 0)) + int(writing_counts.get('UK', 0))} listings total). "
                 "Listing prices and review counts alone do not measure price elasticity."
             ),
             "hypothesis": (
-                "Everyday writing instruments face sharp price elasticity in both markets due to entrenched Western commodity pens (Sharpie S-Gel, BIC). "
-                "Japanese brands cannot command premium pricing on single pens without bundling or emphasizing specialized ergonomic features."
+                "The recorded category has a wide price range, but it mixes product types and pack sizes; the current listings do not establish a $5 ceiling or price elasticity."
             ),
             "evidence": f"Current filtered sample: {int(writing_counts.get('US', 0))} US and {int(writing_counts.get('UK', 0))} UK Pens & Writing listings.",
             "testable_action": (
-                "Prioritize bundled aesthetic multi-packs (e.g., Sarasa Vintage 5-pack) and university bookstore distribution rather than single-pen pegboard displays."
+                "Separate single pens from multipacks and compare like-for-like pen types, features, and unit prices in both markets. "
+                "To test elasticity, collect sales response at different prices in a controlled pilot."
             ),
             "limitation_note": (
-                "Amazon review counts reflect cumulative multi-year sales and do not distinguish third-party reseller listings from official MSRP."
+                "Listing prices do not measure price elasticity; the sample also combines retailers, pack sizes, and product types."
             )
         },
         {
@@ -420,22 +420,17 @@ def identify_price_segments_and_hypotheses(
         },
         {
             "id": "HYP-04",
-            "title": "Specialty Desk Accessories & Eco-Stationery Availability Gaps",
+            "title": "Check how complete the desk-accessory sample is",
             "observation": (
                 f"Desk Accessories account for {desk_coverage['US']} in the US and "
-                f"{desk_coverage['UK']} in the UK within the current filtered sample. These curated listing counts do not establish market-wide availability."
+                f"{desk_coverage['UK']} in the UK within the current filtered sample. These are sample counts only."
             ),
-            "hypothesis": (
-                "A product category white space exists in the UK for innovative, eco-conscious desk accessories (e.g. stapleless binding, precision drafting erasers), "
-                "where consumer novelty and sustainability appeal could open boutique retail channels."
-            ),
+            "hypothesis": "Equal or low counts in this dataset say nothing reliable about the true relative availability in either market.",
             "evidence": f"Current filtered sample: US {desk_coverage['US']}; UK {desk_coverage['UK']}.",
             "testable_action": (
-                "Present eco-stationery lines to UK design, museum, and corporate gift retailers (e.g., London Graphic Centre, Conran Shop)."
+                "Search a broader and consistently defined set of US and UK retailers for the same accessory types, recording whether comparable products are listed and in stock."
             ),
-            "limitation_note": (
-                "Lower observed product count in this sample may reflect sample collection focus on core writing and paper SKUs rather than true distributor absence."
-            )
+            "limitation_note": "The sample is small and curated; it is not a systematic retailer census."
         }
     ]
 
